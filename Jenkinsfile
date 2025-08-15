@@ -2,44 +2,44 @@ pipeline {
     agent any
 
     tools {
-        maven 'maven'  // Maven name from Jenkins Global Tool Configuration
-        jdk 'java-jdk'         // JDK name from Jenkins Global Tool Configuration
+        maven 'maven'   // your Maven tool name in Jenkins
+        jdk 'java-jdk'    // adjust to your configured JDK
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/KARTIKNAIK18/java-CI.git'
+                git branch: 'main', url: 'https://github.com/your-username/your-repo.git'
             }
         }
 
         stage('Build') {
             steps {
                 sh 'mvn clean package'
-
             }
-
         }
-           stage('Run on Jetty') {
-                   steps {
-                       echo 'Starting Jetty server...'
-                       sh 'mvn jetty:run & sleep 10'
-                  }
-                }
 
+        stage('Run on Jetty') {
+            steps {
+                echo 'Starting Jetty server...'
+                sh 'mvn jetty:run & sleep 10'
+            }
+        }
 
-           stage('Archive Artifact') {
-                    steps {
-                        archiveArtifacts artifacts: 'target/*.war', fingerprint: true
-                    }
-                }
+        stage('Archive Artifact') {
+            steps {
+                archiveArtifacts artifacts: 'target/*.war', fingerprint: true
+            }
+        }
+    }
 
     post {
         success {
-            echo '✅ Build and packaging successful!'
+            echo '✅ Build successful and Jetty is running!'
         }
         failure {
             echo '❌ Build failed!'
         }
     }
 }
+
