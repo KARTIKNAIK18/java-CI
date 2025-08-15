@@ -16,28 +16,23 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'mvn clean package'
-            }
-        }
 
-        stage('Archive Artifact') {
-            steps {
-                archiveArtifacts artifacts: 'target/*.war', fingerprint: true
             }
-        }
 
-        stage('Deploy to Tomcat') {
-            when {
-                expression { fileExists('target/hello-java-web-1.0-SNAPSHOT.war') }
-            }
-            steps {
-                echo 'Deploying WAR to Tomcat...'
-                // Example: Copy WAR to remote Tomcat server
-                sh '''
-                scp target/hello-java-web-1.0-SNAPSHOT.war user@your-tomcat-server:/opt/tomcat/webapps/
-                '''
-            }
         }
-    }
+           stage('Run on Jetty') {
+                   steps {
+                       echo 'Starting Jetty server...'
+                       sh 'mvn jetty:run & sleep 10'
+                  }
+                }
+
+
+           stage('Archive Artifact') {
+                    steps {
+                        archiveArtifacts artifacts: 'target/*.war', fingerprint: true
+                    }
+                }
 
     post {
         success {
